@@ -7,12 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.nemirovsky.Main.poolSize;
-import static org.nemirovsky.Main.serverPort;
+import static org.nemirovsky.XmlHttpServerApp.poolSize;
+import static org.nemirovsky.XmlHttpServerApp.port;
 
 public class XmlHttpServerTests {
 
@@ -20,7 +18,7 @@ public class XmlHttpServerTests {
 
     @BeforeAll
     static void setUp() {
-        httpServer.start(serverPort, poolSize);
+        httpServer.start(port, poolSize);
     }
 
     @Test
@@ -37,7 +35,7 @@ public class XmlHttpServerTests {
     private boolean checkServer() {
         boolean result = true;
         try {
-            URL url = new URL("http://localhost:" + serverPort + "/");
+            URL url = new URL("http://localhost:" + port + "/");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(1000);
             connection.setRequestMethod("GET");

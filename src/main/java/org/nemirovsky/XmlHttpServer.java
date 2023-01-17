@@ -8,17 +8,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class XmlHttpServer {
-    private int port;
-    private int poolSize;
     private HttpServer server;
 
     public void start(int port, int poolSize) {
         try {
-            this.port = port;
-            this.poolSize = poolSize;
             server = HttpServer.create(new InetSocketAddress(port), 0);
             System.out.println("XmlHttpServer server started at " + port);
             server.createContext("/", new XmlHttpHandlers.RootHandler());
+            server.createContext("/xml", new XmlHttpHandlers.XmlHandler());
             ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
             server.setExecutor(threadPoolExecutor);
             server.start();
