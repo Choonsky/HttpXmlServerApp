@@ -1,14 +1,12 @@
 package org.nemirovsky;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.nemirovsky.model.Data;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,11 +48,11 @@ public class XmlHttpHandlers {
                 e.printStackTrace();
             }
             System.out.println(xmlData);
-
             if (xmlData == null) {
                 System.out.println("XML is null!");
                 response = "<h1>XML is null!!!</h1>";
             } else response = "<h1>XML is successfully parsed!!!</h1>";
+            addJsonEntry(xmlData);
             // send response
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream outputStream = httpExchange.getResponseBody();
@@ -62,23 +60,18 @@ public class XmlHttpHandlers {
             outputStream.close();
         }
 
-        private static Document convertStringToXMLDocument(BufferedReader br)
-        {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = null;
-            try
-            {
-                builder = factory.newDocumentBuilder();
-                return builder.parse(new InputSource(br));
-            }
-            catch (Exception e)
-            {
-                System.out.println("Exception " + e.getMessage() + " while parsing XML!");
+        private static void addJsonEntry(Data xmlData) throws IOException {
+            String jsonData = "";
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            try {
+                jsonData = mapper.writeValueAsString(xmlData);
+            } catch (Exception e) {
+                System.out.println("Exception " + e.getMessage() + " while making JSON!");
                 e.printStackTrace();
             }
-            return null;
-        }
-        private static void addXmlEntry(Document doc) throws IOException {
+            System.out.println(jsonData);
         }
     }
 
