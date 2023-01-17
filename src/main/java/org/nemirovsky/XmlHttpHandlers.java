@@ -1,7 +1,9 @@
 package org.nemirovsky;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.nemirovsky.model.Data;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -33,18 +35,26 @@ public class XmlHttpHandlers {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+
+            String response;
+
             InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
-            Document doc = convertStringToXMLDocument(br);
-            String response =
-                    "<h1>Your XML message received successfully!</h1>";
-            if (doc == null) {
+            XmlMapper xmlMapper = new XmlMapper();
+            xmlMapper.findAndRegisterModules();
+            Data xmlData = new Data();
+            try {
+                xmlData = xmlMapper.readValue(br, Data.class);
+            } catch (Exception e) {
+                System.out.println("Exception " + e.getMessage() + " while parsing XML!");
+                e.printStackTrace();
+            }
+            System.out.println(xmlData);
+
+            if (xmlData == null) {
                 System.out.println("XML is null!");
                 response = "<h1>XML is null!!!</h1>";
-            } else {
-                System.out.println("XML started with " + doc.getFirstChild().getNodeName() + " parsed.");
-                addXmlEntry(doc);
-            }
+            } else response = "<h1>XML is successfully parsed!!!</h1>";
             // send response
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream outputStream = httpExchange.getResponseBody();
@@ -68,8 +78,7 @@ public class XmlHttpHandlers {
             }
             return null;
         }
-        private static void addXmlEntry(Document doc) {
-            return;
+        private static void addXmlEntry(Document doc) throws IOException {
         }
     }
 
