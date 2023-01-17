@@ -1,24 +1,26 @@
 package org.nemirovsky;
 
 import com.sun.net.httpserver.HttpServer;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-@Slf4j
 public class Main {
+
+    public static int serverPort = 9091;
+    public static int poolSize = 10;
 
     public static void main(String[] args) throws IOException {
 
-        System.out.println("Hello world!");
-        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 9091), 0);
-        server.createContext("/test", new MyHttpHandler());
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-        server.setExecutor(threadPoolExecutor);
-        server.start();
-        log.info("Test...");
+        // start http server
+		XmlHttpServer httpServer = new XmlHttpServer();
+		httpServer.start(serverPort, poolSize);
+
+		System.out.println("Files will be saved at " + System.getProperty("user.dir"));
+
     }
 }
