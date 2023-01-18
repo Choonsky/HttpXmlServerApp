@@ -7,10 +7,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.nemirovsky.model.Data;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -100,7 +97,7 @@ public class XmlHttpHandlers {
             }
             String type = xmlData.getType();
 
-            Path targetFile = Paths.get(targetDirectory + type + "-" + LocalDate.now() + ".log");
+            Path targetFile = Paths.get(targetDirectory + File.separator + type + "-" + LocalDate.now() + ".log");
 
             // locating/creating file and directory
             try {
