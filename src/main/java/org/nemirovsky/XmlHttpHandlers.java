@@ -7,11 +7,11 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.nemirovsky.model.Data;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 
 import static org.nemirovsky.XmlHttpServerApp.port;
 
@@ -72,6 +72,17 @@ public class XmlHttpHandlers {
                 e.printStackTrace();
             }
             System.out.println(jsonData);
+            String type = xmlData.getType();
+            String filename =
+                    Files.createDirectories(Paths.get(System.getProperty("user.dir") + "/output")) + "/" + type +
+                            "-" + LocalDate.now() + ".log";
+            try {
+                File targetFile = new File(filename);
+                System.out.println("Creating file result: " + targetFile.createNewFile());
+            } catch (Exception e) {
+                System.out.println("Exception " + e.getMessage() + " while creating file!");
+                e.printStackTrace();
+            }
         }
     }
 
