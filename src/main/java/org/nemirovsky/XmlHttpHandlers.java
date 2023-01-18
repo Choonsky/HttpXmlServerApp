@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.nemirovsky.XmlHttpServerApp.port;
@@ -87,13 +89,19 @@ public class XmlHttpHandlers {
                 e.printStackTrace();
             }
 
-            if (Files.size(targetFile) == 0) {
-                try (BufferedWriter writer = Files.newBufferedWriter(targetFile, StandardCharsets.UTF_8)) {
-                    writer.write("1\n");
-                } catch (IOException e) {
-                    System.out.println("Exception " + e.getMessage() + " while writing to file!");
-                    e.printStackTrace();
+            try {
+                List<String> fileContent = new ArrayList<>(Files.readAllLines(targetFile, StandardCharsets.UTF_8));
+                System.out.println("fileContent.size = " + fileContent.size() + ", fileContent - " + fileContent);
+                if (fileContent.size() == 0) {
+                    fileContent.add(String.valueOf(1));
+                } else {
+                    fileContent.set(0, String.valueOf(Integer.parseInt(fileContent.get(0)) + 1));
                 }
+                fileContent.add(jsonData);
+                Files.write(targetFile, fileContent, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                System.out.println("Exception " + e.getMessage() + " while writing to file!");
+                e.printStackTrace();
             }
 
             Scanner reader = new Scanner(targetFile);
