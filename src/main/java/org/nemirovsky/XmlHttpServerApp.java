@@ -3,6 +3,7 @@ package org.nemirovsky;
 public class XmlHttpServerApp {
 
     public static int port = 9091;
+    public static int testingPort = 9092;
     public static int poolSize = 10;
     public static String targetDirectory = System.getProperty("user.dir") + "/output/";
 
