@@ -10,10 +10,13 @@ import org.nemirovsky.model.Data;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 import static org.nemirovsky.XmlHttpServerApp.port;
+import static org.nemirovsky.XmlHttpServerApp.targetDirectory;
 
 public class XmlHttpHandlers {
     public static class RootHandler implements HttpHandler {
@@ -73,16 +76,29 @@ public class XmlHttpHandlers {
             }
             System.out.println(jsonData);
             String type = xmlData.getType();
-            String filename =
-                    Files.createDirectories(Paths.get(System.getProperty("user.dir") + "/output")) + "/" + type +
-                            "-" + LocalDate.now() + ".log";
+
+            Path targetFile = Paths.get(targetDirectory + type + "-" + LocalDate.now() + ".log");
             try {
-                File targetFile = new File(filename);
-                System.out.println("Creating file result: " + targetFile.createNewFile());
+                Files.createDirectories(targetFile.getParent()); // create if not exists yet
+                if (!Files.exists(targetFile))
+                    Files.createFile(targetFile); // create if not exists yet
             } catch (Exception e) {
-                System.out.println("Exception " + e.getMessage() + " while creating file!");
+                System.out.println("Exception " + e.getMessage() + " while creating file/directory!");
                 e.printStackTrace();
             }
+
+            if (Files.size(targetFile) == 0) {
+                try (BufferedWriter writer = Files.newBufferedWriter(targetFile, StandardCharsets.UTF_8)) {
+                    writer.write("1\n");
+                } catch (IOException e) {
+                    System.out.println("Exception " + e.getMessage() + " while writing to file!");
+                    e.printStackTrace();
+                }
+            }
+
+            Scanner reader = new Scanner(targetFile);
+            System.out.println(reader.nextLine());
+            reader.close();
         }
     }
 
