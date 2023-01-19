@@ -1,4 +1,4 @@
-# Drone dispatcher service
+# HTTP server analyzing XML request application
 
 ## Table of contents
 
